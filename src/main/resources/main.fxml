@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.loganalyzer.ui.MainController"
+            prefWidth="1200" prefHeight="800">
+    <top>
+        <MenuBar>
+            <menus>
+                <Menu text="File">
+                    <items>
+                        <MenuItem fx:id="loadLogItem" text="Load Log" onAction="#onLoadLog"/>
+                        <MenuItem fx:id="configureItem" text="Configure" onAction="#onConfigure"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.55" orientation="HORIZONTAL">
+            <items>
+                <TextArea fx:id="logArea" editable="true" wrapText="false"
+                          style="-fx-font-family: 'monospace';"/>
+                <VBox>
+                    <children>
+                        <ScrollPane fx:id="chatScroll" fitToWidth="true" VBox.vgrow="ALWAYS">
+                            <content>
+                                <VBox fx:id="chatMessages" spacing="8">
+                                    <padding>
+                                        <Insets top="8" right="8" bottom="8" left="8"/>
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <padding>
+                                <Insets top="8" right="8" bottom="8" left="8"/>
+                            </padding>
+                            <children>
+                                <TextField fx:id="chatInput" promptText="Ask about the log..."
+                                           HBox.hgrow="ALWAYS" onAction="#onSend"/>
+                                <Button fx:id="sendButton" text="Send" onAction="#onSend"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </items>
+        </SplitPane>
+    </center>
+</BorderPane>

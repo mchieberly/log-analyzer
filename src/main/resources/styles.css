@@ -1,0 +1,40 @@
+.chat-row {
+    -fx-padding: 2 0 2 0;
+}
+
+.chat-row-user {
+    -fx-alignment: center-right;
+}
+
+.chat-row-assistant {
+    -fx-alignment: center-left;
+}
+
+.chat-row-error {
+    -fx-alignment: center-left;
+}
+
+.chat-bubble {
+    -fx-padding: 8 12 8 12;
+    -fx-background-radius: 12;
+    -fx-max-width: 520;
+    -fx-wrap-text: true;
+}
+
+.chat-bubble-user {
+    -fx-background-color: #2f6feb;
+    -fx-text-fill: white;
+}
+
+.chat-bubble-assistant {
+    -fx-background-color: #eceff4;
+    -fx-text-fill: #1c1c1e;
+}
+
+.chat-bubble-error {
+    -fx-background-color: #fde2e1;
+    -fx-text-fill: #8a1f1a;
+    -fx-border-color: #e7b3b0;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}

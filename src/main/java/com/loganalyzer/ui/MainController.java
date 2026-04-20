@@ -4,15 +4,16 @@ import com.loganalyzer.llm.ChatService;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -186,21 +187,28 @@ public class MainController {
         sendButton.setDisable(true);
         chatInput.setDisable(true);
 
+        MarkdownBubble assistantBubble = appendMarkdownBubble("assistant");
+
         ChatService service = chatService();
         Task<String> task = new Task<>() {
             @Override
             protected String call() {
-                return service.send(userMessage, logContent);
+                return service.sendStreaming(userMessage, logContent, delta ->
+                        Platform.runLater(() -> {
+                            assistantBubble.append(delta);
+                            chatScroll.setVvalue(1.0);
+                        }));
             }
         };
         task.setOnSucceeded(e -> {
-            appendBubble(task.getValue(), "assistant");
+            assistantBubble.setText(task.getValue());
             sendButton.setDisable(false);
             chatInput.setDisable(false);
             chatInput.requestFocus();
         });
         task.setOnFailed(e -> {
             Throwable ex = task.getException();
+            chatMessages.getChildren().remove(assistantBubble.getParent());
             appendBubble("Error: " + (ex != null ? ex.getMessage() : "unknown error"), "error");
             sendButton.setDisable(false);
             chatInput.setDisable(false);
@@ -212,12 +220,49 @@ public class MainController {
         t.start();
     }
 
-    private void appendBubble(String content, String kind) {
-        Label label = new Label(content);
-        label.setWrapText(true);
-        label.getStyleClass().addAll("chat-bubble", "chat-bubble-" + kind);
+    private MarkdownBubble appendMarkdownBubble(String kind) {
+        MarkdownBubble bubble = new MarkdownBubble(kind);
+        HBox row = new HBox(bubble);
+        row.getStyleClass().addAll("chat-row", "chat-row-" + kind);
+        chatMessages.getChildren().add(row);
+        Platform.runLater(() -> chatScroll.setVvalue(1.0));
+        return bubble;
+    }
 
-        HBox row = new HBox(label);
+    private static final double BUBBLE_MAX_WIDTH = 520;
+    private static final double BUBBLE_H_PADDING = 28;
+    private static final double BUBBLE_V_PADDING = 18;
+
+    private void appendBubble(String content, String kind) {
+        TextArea bubble = new TextArea(content);
+        bubble.setEditable(false);
+        bubble.setWrapText(true);
+        bubble.setFocusTraversable(false);
+        bubble.setPrefRowCount(1);
+        bubble.getStyleClass().addAll("chat-bubble", "chat-bubble-" + kind);
+
+        bubble.skinProperty().addListener((obs, oldSkin, newSkin) -> {
+            if (newSkin == null) {
+                return;
+            }
+            bubble.applyCss();
+            bubble.layout();
+            Node textNode = bubble.lookup(".text");
+            if (!(textNode instanceof Text skinText)) {
+                return;
+            }
+            Text measurer = new Text(content);
+            measurer.setFont(skinText.getFont());
+            double naturalW = measurer.getLayoutBounds().getWidth();
+            double targetW = Math.min(naturalW + BUBBLE_H_PADDING, BUBBLE_MAX_WIDTH);
+            measurer.setWrappingWidth(targetW - BUBBLE_H_PADDING);
+            double wrappedH = measurer.getLayoutBounds().getHeight();
+            bubble.setPrefWidth(targetW);
+            bubble.setMaxWidth(targetW);
+            bubble.setPrefHeight(wrappedH + BUBBLE_V_PADDING);
+        });
+
+        HBox row = new HBox(bubble);
         row.getStyleClass().addAll("chat-row", "chat-row-" + kind);
 
         chatMessages.getChildren().add(row);

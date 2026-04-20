@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 public final class Config {
 
-    public static final String DEFAULT_API_BASE_URL = "https://localhost:11434/v1";
+    public static final String DEFAULT_API_BASE_URL = "http://localhost:11434/v1";
     public static final String DEFAULT_API_KEY = "";
     public static final String DEFAULT_MODEL = "qwen3.5:9b";
     public static final String DEFAULT_SYSTEM_PROMPT =

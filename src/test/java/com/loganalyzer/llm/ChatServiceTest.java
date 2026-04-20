@@ -40,19 +40,17 @@ class ChatServiceTest {
         assertEquals(MODEL, stub.models.get(0));
 
         List<ChatMessage> sent = stub.captured.get(0);
-        assertEquals(3, sent.size());
+        assertEquals(2, sent.size());
 
         assertEquals(ChatMessage.Role.SYSTEM, sent.get(0).role());
         assertEquals(SYSTEM_PROMPT, sent.get(0).content());
 
         assertEquals(ChatMessage.Role.USER, sent.get(1).role());
         String seeded = sent.get(1).content();
-        assertTrue(seeded.startsWith("<log>\n"), "seeded log should be wrapped in <log> open tag");
-        assertTrue(seeded.endsWith("\n</log>"), "seeded log should be wrapped in </log> close tag");
-        assertTrue(seeded.contains(LOG), "seeded log should contain full log content");
-
-        assertEquals(ChatMessage.Role.USER, sent.get(2).role());
-        assertEquals("what happened?", sent.get(2).content());
+        assertTrue(seeded.contains("<log>\n"), "seeded user turn should contain <log> open tag");
+        assertTrue(seeded.contains("\n</log>"), "seeded user turn should contain </log> close tag");
+        assertTrue(seeded.contains(LOG), "seeded user turn should contain full log content");
+        assertTrue(seeded.endsWith("what happened?"), "seeded user turn should end with the question");
     }
 
     @Test
@@ -68,16 +66,15 @@ class ChatServiceTest {
         assertEquals(2, stub.captured.size());
 
         List<ChatMessage> second = stub.captured.get(1);
-        assertEquals(5, second.size());
+        assertEquals(4, second.size());
         assertEquals(ChatMessage.Role.SYSTEM, second.get(0).role());
         assertEquals(ChatMessage.Role.USER, second.get(1).role());
         assertTrue(second.get(1).content().contains(LOG));
-        assertEquals(ChatMessage.Role.USER, second.get(2).role());
-        assertEquals("q1", second.get(2).content());
-        assertEquals(ChatMessage.Role.ASSISTANT, second.get(3).role());
-        assertEquals("first", second.get(3).content());
-        assertEquals(ChatMessage.Role.USER, second.get(4).role());
-        assertEquals("q2", second.get(4).content());
+        assertTrue(second.get(1).content().endsWith("q1"));
+        assertEquals(ChatMessage.Role.ASSISTANT, second.get(2).role());
+        assertEquals("first", second.get(2).content());
+        assertEquals(ChatMessage.Role.USER, second.get(3).role());
+        assertEquals("q2", second.get(3).content());
     }
 
     @Test
@@ -89,13 +86,13 @@ class ChatServiceTest {
         service.send("hello", LOG);
 
         List<ChatMessage> history = service.history();
-        assertEquals(4, history.size());
+        assertEquals(3, history.size());
         assertEquals(ChatMessage.Role.SYSTEM, history.get(0).role());
         assertEquals(ChatMessage.Role.USER, history.get(1).role());
-        assertEquals(ChatMessage.Role.USER, history.get(2).role());
-        assertEquals("hello", history.get(2).content());
-        assertEquals(ChatMessage.Role.ASSISTANT, history.get(3).role());
-        assertEquals("reply-a", history.get(3).content());
+        assertTrue(history.get(1).content().contains(LOG));
+        assertTrue(history.get(1).content().endsWith("hello"));
+        assertEquals(ChatMessage.Role.ASSISTANT, history.get(2).role());
+        assertEquals("reply-a", history.get(2).content());
     }
 
     @Test
@@ -109,9 +106,9 @@ class ChatServiceTest {
 
         service.send("q2", "different log");
         List<ChatMessage> afterReset = stub.captured.get(1);
-        assertEquals(3, afterReset.size());
+        assertEquals(2, afterReset.size());
         assertEquals(ChatMessage.Role.SYSTEM, afterReset.get(0).role());
         assertTrue(afterReset.get(1).content().contains("different log"));
-        assertEquals("q2", afterReset.get(2).content());
+        assertTrue(afterReset.get(1).content().endsWith("q2"));
     }
 }

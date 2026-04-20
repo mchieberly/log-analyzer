@@ -21,20 +21,45 @@
     -fx-wrap-text: true;
 }
 
+.chat-bubble .content {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.chat-bubble > .scroll-pane,
+.chat-bubble > .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.chat-bubble .scroll-bar {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+}
+
 .chat-bubble-user {
     -fx-background-color: #2f6feb;
-    -fx-text-fill: white;
+}
+
+.chat-bubble-user .text {
+    -fx-fill: white;
 }
 
 .chat-bubble-assistant {
     -fx-background-color: #eceff4;
-    -fx-text-fill: #1c1c1e;
+}
+
+.chat-bubble-assistant .text {
+    -fx-fill: #1c1c1e;
 }
 
 .chat-bubble-error {
     -fx-background-color: #fde2e1;
-    -fx-text-fill: #8a1f1a;
     -fx-border-color: #e7b3b0;
     -fx-border-radius: 12;
     -fx-background-radius: 12;
+}
+
+.chat-bubble-error .text {
+    -fx-fill: #8a1f1a;
 }

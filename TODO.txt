@@ -1,0 +1,5 @@
+Next up (viewable in ui.png):
+
+1. Fix extra space below end of response from model
+2. Add "Thinking" bubbles or italisized text when model is thinking
+

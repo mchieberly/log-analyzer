@@ -12,9 +12,9 @@ import java.util.logging.Logger;
 
 public final class Config {
 
-    public static final String DEFAULT_API_BASE_URL = "https://api.openai.com/v1";
+    public static final String DEFAULT_API_BASE_URL = "https://localhost:11434/v1";
     public static final String DEFAULT_API_KEY = "";
-    public static final String DEFAULT_MODEL = "gpt-4o-mini";
+    public static final String DEFAULT_MODEL = "qwen3.5:9b";
     public static final String DEFAULT_SYSTEM_PROMPT =
             "You are a helpful assistant that analyzes log files. "
                     + "Answer questions about the provided log clearly and concisely, "
